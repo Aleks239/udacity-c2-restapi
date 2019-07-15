@@ -29,7 +29,20 @@ router.patch('/:id',
     requireAuth, 
     async (req: Request, res: Response) => {
         //@TODO try it yourself
-        res.send(500).send("not implemented")
+        let {id} = req.params;
+        const caption = req.body.caption;
+        const fileName = req.body.url;
+        if (!caption && !fileName) {
+            return res.status(400).send({ message: 'Caption or url is required or malformed' });
+        }
+        const item = await FeedItem.findByPk(id);
+        if(item){
+           const updated_feed = await item.update({
+               url:fileName,
+               caption:caption
+           })
+           res.status(201).send(updated_feed);
+        }
 });
 
 
@@ -60,8 +73,8 @@ router.post('/',
     if (!fileName) {
         return res.status(400).send({ message: 'File url is required' });
     }
-
-    const item = await new FeedItem({
+    try{
+        const item = await new FeedItem({
             caption: caption,
             url: fileName
     });
@@ -70,6 +83,12 @@ router.post('/',
 
     saved_item.url = AWS.getGetSignedUrl(saved_item.url);
     res.status(201).send(saved_item);
+    }catch(e){
+        console.log(e.message)
+        res.status(500).send(e.message);
+    }
+
+    
 });
 
 export const FeedRouter: Router = router;
