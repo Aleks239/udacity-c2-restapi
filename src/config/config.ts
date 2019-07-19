@@ -9,6 +9,7 @@ export const config = {
     "aws_profile": process.env.PROFILE,
     "aws_media_bucket": process.env.BUCKET,
     "jwt_secret": process.env.JWT_SECRET,
+    "imaging_service_url": process.env.IMAGING_SERVICE_ENDPOINT
   },
   "prod": {
     "username": "",
